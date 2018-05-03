@@ -1,3 +1,5 @@
+// copy from https://github.com/tyler-smith/go-bip39
+
 package keystore
 
 import "strings"

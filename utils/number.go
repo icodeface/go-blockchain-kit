@@ -1,3 +1,5 @@
+// copy from https://github.com/tyler-smith/go-bip32/blob/master/utils.go
+
 package utils
 
 import "encoding/binary"

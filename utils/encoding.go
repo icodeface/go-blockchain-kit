@@ -114,7 +114,3 @@ func (enc *Encoding) DecodeStringN(s string, n int) ([]byte, error) {
 	pad := make([]byte, n-len(value))
 	return append(pad, value...), nil
 }
-
-func Hash160ToB58Address(hash160 []byte, addrType int) (string, error) {
-	Uint32Bytes()
-}

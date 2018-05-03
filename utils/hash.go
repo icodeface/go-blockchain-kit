@@ -44,11 +44,9 @@ func Hash160(data []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	hash2, err := HashRipeMD160(hash1)
 	if err != nil {
 		return nil, err
 	}
-
 	return hash2, nil
 }

@@ -27,3 +27,18 @@ func AddChecksumToBytes(data []byte) ([]byte, error) {
 	}
 	return append(data, checksum...), nil
 }
+
+func ValidateChecksum(data []byte) ([]byte, error) {
+	cs1, err := Checksum(data[0 : len(data)-4])
+	if err != nil {
+		return nil, err
+	}
+
+	cs2 := data[len(data)-4:]
+	for i := range cs1 {
+		if cs1[i] != cs2[i] {
+			return nil, ErrInvalidChecksum
+		}
+	}
+	return data[:len(data)-4], nil
+}

@@ -21,7 +21,10 @@ func main()  {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("child is ", child)
+	fmt.Println("child is ", child, child.PublicKey())
 	hash160, _ := utils.Hash160(child.PublicKey().Key)
-	fmt.Println(keystore.Hash160ToB58Address(hash160, 0))
+	fmt.Println(hash160)
+	address, _ := keystore.Hash160ToB58Address(hash160, 0)
+	fmt.Println(address)
+	fmt.Println(keystore.B58AddressToHash160(address))
 }

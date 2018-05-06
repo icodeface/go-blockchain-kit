@@ -248,14 +248,6 @@ func (key *Key) Serialize() ([]byte, error) {
 	return serializedKey, nil
 }
 
-func base58Encode(data []byte) string {
-	return utils.Base58.EncodeToString(data)
-}
-
-func base58Decode(data string) ([]byte, error) {
-	return utils.Base58.DecodeString(data)
-}
-
 // B58Serialize encodes the Key in the standard Bitcoin base58 encoding
 func (key *Key) B58Serialize() string {
 	serializedKey, err := key.Serialize()
@@ -263,8 +255,9 @@ func (key *Key) B58Serialize() string {
 		return ""
 	}
 
-	return base58Encode(serializedKey)
+	return utils.Base58.EncodeToString(serializedKey)
 }
+
 
 // String encodes the Key in the standard Bitcoin base58 encoding
 func (key *Key) String() string {
@@ -279,6 +272,7 @@ func (key *Key) String() string {
 		return hex.EncodeToString(key.Key)
 	}
 }
+
 
 // Deserialize a byte slice into a Key
 func Deserialize(data []byte) (*Key, error) {
@@ -301,23 +295,17 @@ func Deserialize(data []byte) (*Key, error) {
 	}
 
 	// validate checksum
-	cs1, err := utils.Checksum(data[0 : len(data)-4])
+	_, err := utils.ValidateChecksum(data)
 	if err != nil {
 		return nil, err
 	}
 
-	cs2 := data[len(data)-4:]
-	for i := range cs1 {
-		if cs1[i] != cs2[i] {
-			return nil, utils.ErrInvalidChecksum
-		}
-	}
 	return key, nil
 }
 
 // B58Deserialize deserializes a Key encoded in base58 encoding
 func B58Deserialize(data string) (*Key, error) {
-	b, err := base58Decode(data)
+	b, err := utils.Base58.DecodeString(data)
 	if err != nil {
 		return nil, err
 	}

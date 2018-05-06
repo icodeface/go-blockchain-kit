@@ -50,12 +50,12 @@ type Key struct {
 // NewMasterKey creates a new master extended key from a seed
 func NewMasterKey(seed []byte) (*Key, error) {
 	// Generate key and chaincode
-	hmac := hmac.New(sha512.New, []byte("Bitcoin seed"))
-	_, err := hmac.Write(seed)
+	hmac512 := hmac.New(sha512.New, []byte("Bitcoin seed"))
+	_, err := hmac512.Write(seed)
 	if err != nil {
 		return nil, err
 	}
-	intermediary := hmac.Sum(nil)
+	intermediary := hmac512.Sum(nil)
 
 	// Split it into our key and chain code
 	keyBytes := intermediary[:32]
@@ -153,23 +153,23 @@ func (key *Key) DeriveChildKey(derivation string) (*Key, error) {
 		}
 		var i uint32
 		if strings.HasSuffix(n, "'") {
-			num, error := strconv.Atoi(string(n[0:len(n)-1]))
-			if error != nil {
-				return nil, error
+			num, err := strconv.Atoi(string(n[0:len(n)-1]))
+			if err != nil {
+				return nil, err
 			}
 			i = FirstHardenedChild + uint32(num)
 		} else {
-			num, error := strconv.Atoi(n)
-			if error != nil {
-				return nil, error
+			num, err := strconv.Atoi(n)
+			if err != nil {
+				return nil, err
 			}
 			i = uint32(num)
 		}
 
-		new_child, error := child.NewChildKey(i)
+		new_child, err := child.NewChildKey(i)
 		child = new_child
-		if error != nil {
-			return nil, error
+		if err != nil {
+			return nil, err
 		}
 	}
 	return child, nil
@@ -193,12 +193,12 @@ func (key *Key) getIntermediary(childIdx uint32) ([]byte, error) {
 	}
 	data = append(data, childIndexBytes...)
 
-	hmac := hmac.New(sha512.New, key.ChainCode)
-	_, err := hmac.Write(data)
+	hmac512 := hmac.New(sha512.New, key.ChainCode)
+	_, err := hmac512.Write(data)
 	if err != nil {
 		return nil, err
 	}
-	return hmac.Sum(nil), nil
+	return hmac512.Sum(nil), nil
 }
 
 // PublicKey returns the public version of key or return a copy

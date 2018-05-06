@@ -24,7 +24,7 @@ func main()  {
 	fmt.Println("child is ", child, child.PublicKey())
 	hash160, _ := utils.Hash160(child.PublicKey().Key)
 	fmt.Println(hash160)
-	address, _ := keystore.Hash160ToB58Address(hash160, 0)
+	address, _ := utils.Hash160ToB58Address(hash160, 0)
 	fmt.Println(address)
-	fmt.Println(keystore.B58AddressToHash160(address))
+	fmt.Println(utils.B58AddressToHash160(address))
 }

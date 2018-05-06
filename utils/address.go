@@ -1,8 +1,7 @@
-package keystore
+package utils
 
 import (
 	"fmt"
-	"github.com/icodeface/go-blockchain-kit/utils"
 	"errors"
 	"bytes"
 	"strings"
@@ -21,7 +20,7 @@ func baseDecode(s string) ([]byte, error) {
 		}
 	}
 	ss := string(s[nPad:])
-	b, err := utils.Base58.DecodeString(ss)
+	b, err := Base58.DecodeString(ss)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +39,7 @@ func baseEncode(b []byte) (string, error) {
 			break
 		}
 	}
-	return fmt.Sprintf("%v%v", strings.Repeat("1", nPad), utils.Base58.EncodeToString(b)), nil
+	return fmt.Sprintf("%v%v", strings.Repeat("1", nPad), Base58.EncodeToString(b)), nil
 }
 
 
@@ -53,7 +52,7 @@ func Hash160ToB58Address(hash160 []byte, addrType int) (string, error) {
 	buffer.Write([]byte{byte(addrType)})
 	buffer.Write(hash160)
 
-	b, err := utils.AddChecksumToBytes(buffer.Bytes())
+	b, err := AddChecksumToBytes(buffer.Bytes())
 	if err != nil {
 		return "", nil
 	}
@@ -70,7 +69,7 @@ func B58AddressToHash160(address string) (hash160 []byte, addrType int, err erro
 		return nil, 0, err
 	}
 
-	data, err := utils.ValidateChecksum(b)
+	data, err := ValidateChecksum(b)
 	if err != nil {
 		return nil, 0, err
 	}

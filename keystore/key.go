@@ -1,4 +1,4 @@
-// copy from https://github.com/tyler-smith/go-bip32/blob/master/bip32.go
+// take idea from https://github.com/tyler-smith/go-bip32/blob/master/bip32.go
 
 package keystore
 

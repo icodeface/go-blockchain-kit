@@ -1,4 +1,5 @@
-// copy from https://github.com/tyler-smith/go-bip32/blob/master/utils.go
+// take ieda from https://github.com/tyler-smith/go-bip32/blob/master/utils.go
+// take ieda from https://github.com/FactomProject/basen/blob/master/basen.go
 
 package utils
 
@@ -11,7 +12,7 @@ import (
 	"strings"
 )
 
-// copy from https://github.com/FactomProject/basen/blob/master/basen.go
+
 
 var zero = big.NewInt(int64(0))
 

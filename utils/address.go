@@ -4,43 +4,10 @@ import (
 	"fmt"
 	"errors"
 	"bytes"
-	"strings"
 )
 
 const hash160Length = 20
 const b58addressLength = 34
-
-func baseDecode(s string) ([]byte, error) {
-	nPad := 0
-	for _, c := range s {
-		if c == '1' {
-			nPad += 1
-		}else {
-			break
-		}
-	}
-	ss := string(s[nPad:])
-	b, err := Base58.DecodeString(ss)
-	if err != nil {
-		return nil, err
-	}
-	buffer := new(bytes.Buffer)
-	buffer.Write(make([]byte, nPad))
-	buffer.Write(b)
-	return buffer.Bytes(), nil
-}
-
-func baseEncode(b []byte) (string, error) {
-	nPad := 0
-	for _, c := range b {
-		if c == 0x00 {
-			nPad += 1
-		}else {
-			break
-		}
-	}
-	return fmt.Sprintf("%v%v", strings.Repeat("1", nPad), Base58.EncodeToString(b)), nil
-}
 
 
 func Hash160ToB58Address(hash160 []byte, addrType int) (string, error) {
@@ -52,11 +19,7 @@ func Hash160ToB58Address(hash160 []byte, addrType int) (string, error) {
 	buffer.Write([]byte{byte(addrType)})
 	buffer.Write(hash160)
 
-	b, err := AddChecksumToBytes(buffer.Bytes())
-	if err != nil {
-		return "", nil
-	}
-	return baseEncode(b)
+	return encodeBase58Check(buffer.Bytes())
 }
 
 func B58AddressToHash160(address string) (hash160 []byte, addrType int, err error) {
@@ -64,12 +27,7 @@ func B58AddressToHash160(address string) (hash160 []byte, addrType int, err erro
 		panic(errors.New(fmt.Sprintf("address len is wrong: %d", len(hash160))))
 	}
 
-	b, err := baseDecode(address)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	data, err := ValidateChecksum(b)
+	data, err := decodeBase58Check(address)
 	if err != nil {
 		return nil, 0, err
 	}

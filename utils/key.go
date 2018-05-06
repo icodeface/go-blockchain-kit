@@ -113,3 +113,26 @@ func expandPublicKey(key []byte) (*big.Int, *big.Int) {
 
 	return X, Y
 }
+
+func WIFEncode(prefix int, secret []byte, compressed bool) (string, error) {
+	buffer := new(bytes.Buffer)
+
+	buffer.Write([]byte{byte(prefix)})
+	buffer.Write(secret)
+	if compressed {
+		buffer.Write([]byte{byte(1)})
+	}
+	return encodeBase58Check(buffer.Bytes())
+}
+
+
+func WIFDecode(key string) (prefix int, secret []byte, compressed bool, err error) {
+	data, err := decodeBase58Check(key)
+	if err != nil {
+		return
+	}
+	prefix = int(data[0])
+	secret = data[1:33]
+	compressed = len(data) == 34
+	return
+}

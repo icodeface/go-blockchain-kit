@@ -7,6 +7,8 @@ import (
 	"unicode/utf8"
 	"crypto/rand"
 	"fmt"
+	"bytes"
+	"strings"
 )
 
 // copy from https://github.com/FactomProject/basen/blob/master/basen.go
@@ -113,4 +115,59 @@ func (enc *Encoding) DecodeStringN(s string, n int) ([]byte, error) {
 	}
 	pad := make([]byte, n-len(value))
 	return append(pad, value...), nil
+}
+
+
+func baseDecode(s string) ([]byte, error) {
+	nPad := 0
+	for _, c := range s {
+		if c == '1' {
+			nPad += 1
+		}else {
+			break
+		}
+	}
+	ss := string(s[nPad:])
+	b, err := Base58.DecodeString(ss)
+	if err != nil {
+		return nil, err
+	}
+	buffer := new(bytes.Buffer)
+	buffer.Write(make([]byte, nPad))
+	buffer.Write(b)
+	return buffer.Bytes(), nil
+}
+
+func baseEncode(b []byte) (string, error) {
+	nPad := 0
+	for _, c := range b {
+		if c == 0x00 {
+			nPad += 1
+		}else {
+			break
+		}
+	}
+	return fmt.Sprintf("%v%v", strings.Repeat("1", nPad), Base58.EncodeToString(b)), nil
+}
+
+func encodeBase58Check(b []byte) (string, error) {
+	b2, err := AddChecksumToBytes(b)
+	if err != nil {
+		return "", err
+	}
+	return baseEncode(b2)
+}
+
+
+func decodeBase58Check(s string) ([]byte, error) {
+	b, err := baseDecode(s)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := ValidateChecksum(b)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }

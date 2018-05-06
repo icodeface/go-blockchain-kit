@@ -17,6 +17,7 @@ const (
 	// FirstHardenedChild is the index of the firxt "harded" child key as per the
 	// bip32 spec
 	FirstHardenedChild = uint32(0x80000000)
+	WIFPrefix = 0x80
 )
 
 var (
@@ -267,7 +268,16 @@ func (key *Key) B58Serialize() string {
 
 // String encodes the Key in the standard Bitcoin base58 encoding
 func (key *Key) String() string {
-	return key.B58Serialize()
+	if key.Depth == 0 {
+		return key.B58Serialize()
+	}
+
+	if key.IsPrivate {
+		s, _ := utils.WIFEncode(WIFPrefix, key.Key, true)
+		return s
+	} else {
+		return hex.EncodeToString(key.Key)
+	}
 }
 
 // Deserialize a byte slice into a Key

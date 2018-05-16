@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"errors"
 	"bytes"
+	"strings"
 )
 
 const hash160Length = 20
@@ -32,4 +33,21 @@ func B58AddressToHash160(address string) (hash160 []byte, addrType int, err erro
 		return nil, 0, err
 	}
 	return data[len(data)-hash160Length:], int(data[0]), nil
+}
+
+func IsB58Address(address string) (bool) {
+
+	hash160, addrType, err := B58AddressToHash160(address)
+	if err != nil {
+		return false
+	}
+
+	// todo should check addrType
+
+	addr2, err := Hash160ToB58Address(hash160, addrType)
+	if err != nil {
+		return false
+	}
+
+	return strings.Compare(address, addr2) == 0
 }
